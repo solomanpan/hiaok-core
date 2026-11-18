@@ -41,3 +41,13 @@ def test_http_response_helpers():
     resp = HttpResponse(status=200, body=b'{"a": 1}')
     assert resp.ok and resp.json() == {"a": 1} and resp.text == '{"a": 1}'
     assert not HttpResponse(status=404).ok
+
+
+def test_request_context_carries_org_tenant_user():
+    from hiaok_core.context import current_context, request_context
+
+    assert current_context().org_uuid is None
+    with request_context("taro", "t-1", org_uuid="o1", tenant_uuid="t1", user_uuid="u1") as ctx:
+        assert current_context() is ctx
+        assert (ctx.operator, ctx.org_uuid, ctx.tenant_uuid, ctx.user_uuid) == ("taro", "o1", "t1", "u1")
+    assert current_context().operator == "system"

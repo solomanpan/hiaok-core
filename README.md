@@ -7,9 +7,10 @@ that services depend on (never the other way round).
 |---|---|
 | `hiaok_core.facade` | Interfaces for external capabilities: `Cache`, `EventBus`, `TransactionManager`, `PasswordHasher`, `IdGenerator`, `HttpClient`. Implementations live in each service's infrastructure layer |
 | `hiaok_core.exception` | `DomainError` (a value carried by `Result.Error`) and the raisable `HiaokError` hierarchy (`DomainException`, `InfrastructureError`, `HttpClientError`) |
+| `hiaok_core.factory` | `ErrorCatalog` / `ErrorSpec`: declare each business error once (kind, code, message template), produce it as a value (`Spec(...)`), a `Result` error (`.err(...)`) or an exception (`.raise_(...)`) |
 | `hiaok_core.json` | JSON encode/decode that understands datetime / Enum / set / dataclass |
 | `hiaok_core.fp` | `curry`, chainable `AsyncResult`, `sequence` |
-| `hiaok_core.context` | Per-request / per-message context (operator, trace id) |
+| `hiaok_core.context` | Per-request / per-message context: operator, trace id, org / tenant / user (filled once authentication is in place) |
 
 ## Layout
 
@@ -24,7 +25,20 @@ hiaok-core/
 ## Install (uv)
 
 ```bash
-uv add "hiaok-core @ git+https://github.com/solomanpan/hiaok-core" --tag v0.1.0
+uv add "hiaok-core @ git+https://github.com/solomanpan/hiaok-core" --tag v0.2.0
+```
+
+## Error catalog
+
+```python
+from hiaok_core.factory import ErrorCatalog, ErrorSpec
+
+
+class RoleErrors(ErrorCatalog):
+    system_role = ErrorSpec.conflict("system_role", "system role '{code}' cannot be deleted")
+
+
+return RoleErrors.system_role.err(code=role.role_code)  # inside Result-returning code
 ```
 
 ## Develop

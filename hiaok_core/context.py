@@ -14,8 +14,16 @@ from dataclasses import dataclass, field
 
 @dataclass(frozen=True)
 class RequestContext:
+    """Who is acting, for which organization / tenant, and the correlation id.
+
+    ``org_uuid`` / ``tenant_uuid`` / ``user_uuid`` stay ``None`` until authentication fills them in.
+    """
+
     operator: str = "system"
     trace_id: str = field(default_factory=lambda: uuid.uuid4().hex)
+    org_uuid: str | None = None
+    tenant_uuid: str | None = None
+    user_uuid: str | None = None
 
 
 _context: ContextVar[RequestContext | None] = ContextVar("hiaok_request_context", default=None)
@@ -27,8 +35,21 @@ def current_context() -> RequestContext:
 
 
 @contextmanager
-def request_context(operator: str = "system", trace_id: str | None = None) -> Generator[RequestContext, None, None]:
-    ctx = RequestContext(operator=operator, trace_id=trace_id or uuid.uuid4().hex)
+def request_context(
+    operator: str = "system",
+    trace_id: str | None = None,
+    *,
+    org_uuid: str | None = None,
+    tenant_uuid: str | None = None,
+    user_uuid: str | None = None,
+) -> Generator[RequestContext, None, None]:
+    ctx = RequestContext(
+        operator=operator,
+        trace_id=trace_id or uuid.uuid4().hex,
+        org_uuid=org_uuid,
+        tenant_uuid=tenant_uuid,
+        user_uuid=user_uuid,
+    )
     token = _context.set(ctx)
     try:
         yield ctx
