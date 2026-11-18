@@ -1,0 +1,49 @@
+[project]
+name = "hiaok-core"
+version = "0.1.0"
+description = "hiaok core: facade interfaces, exceptions, JSON / functional helpers, request context"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "solomanpan", email = "142956047+solomanpan@users.noreply.github.com" }]
+requires-python = ">=3.12"
+dependencies = [
+    "expression>=6.0.1",
+    "toolz>=1.2.0",
+]
+
+[project.urls]
+Repository = "https://github.com/solomanpan/hiaok-core"
+
+[build-system]
+requires = ["uv_build>=0.13.8,<0.14.0"]
+build-backend = "uv_build"
+
+# flat layout: the package lives in ./hiaok_core (no src/ directory)
+[tool.uv.build-backend]
+module-name = "hiaok_core"
+module-root = ""
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.414",
+    "pytest>=9.2.0",
+    "ruff>=0.17.5",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importlib"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC", "SIM", "RUF"]
+
+[tool.pyright]
+include = ["hiaok_core", "tests"]
+pythonVersion = "3.12"
+typeCheckingMode = "standard"
+reportDeprecated = "warning"
