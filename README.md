@@ -3,6 +3,9 @@
 Core library for the [hiaok](https://github.com/solomanpan/hiaok) project: business-agnostic building blocks
 that services depend on (never the other way round).
 
+Part of a DDD example, front to back: [hiaok](https://github.com/solomanpan/hiaok) (Python back end, depends on this
+library) and [hiaok-web](https://github.com/solomanpan/hiaok-web) (TypeScript / React Native front end with its own DDD core).
+
 | Module | Contents |
 |---|---|
 | `hiaok_core.facade` | Interfaces for external capabilities: `Cache`, `EventBus`, `TransactionManager`, `PasswordHasher`, `IdGenerator`, `HttpClient`. Implementations live in each service's infrastructure layer |
